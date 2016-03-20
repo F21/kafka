@@ -1,7 +1,7 @@
 FROM f21global/java:8
 MAINTAINER Francis Chuang <francis.chuang@boostport.com>
 
-ENV KAFKA_VER 0.9.0.0
+ENV KAFKA_VER 0.9.0.1
 ENV SCALA_VER 2.11
 
 RUN groupadd kafka \
