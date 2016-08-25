@@ -39,4 +39,4 @@ until $(nc -z -v -w5 ${REMOTE_ADDR[0]} ${REMOTE_ADDR[1]}); do
     sleep 2
 done
 
-exec gosu kafka /opt/kafka/bin/kafka-server-start.sh $CONFIG_FILE
+exec su-exec kafka /opt/kafka/bin/kafka-server-start.sh $CONFIG_FILE

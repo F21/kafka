@@ -1,20 +1,31 @@
-FROM f21global/java:8
+FROM openjdk:8-jre-alpine
 MAINTAINER Francis Chuang <francis.chuang@boostport.com>
 
-ENV KAFKA_VER 0.10.0.0
+ENV KAFKA_VER 0.10.0.1
 ENV SCALA_VER 2.11
 
-RUN groupadd kafka \
-    && adduser --system --home /opt/kafka --disabled-login --ingroup kafka kafka  \
-    && apt-get update \
-    && apt-get install -y wget ca-certificates wget \
-    && wget -q -O - http://apache.uberglobalmirror.com/kafka/$KAFKA_VER/kafka_$SCALA_VER-$KAFKA_VER.tgz | tar -xzf - -C /opt/kafka  --strip-components 1 \
-    && chown -R kafka:kafka /opt/kafka
-
-RUN arch="$(dpkg --print-architecture)" \
-	&& set -x \
-	&& wget -O /usr/local/bin/gosu "https://github.com/tianon/gosu/releases/download/1.7/gosu-$arch" \
-	&& chmod +x /usr/local/bin/gosu
+RUN apk --no-cache --update add bash ca-certificates gnupg openssl su-exec tar \
+ && update-ca-certificates \
+\
+# Set up directories
+ && mkdir -p /opt/kafka \
+\
+# Download Kafka
+ && wget -O /tmp/KEYS https://kafka.apache.org/KEYS \
+ && gpg --import /tmp/KEYS \
+ && wget -q -O /tmp/kafka.tar.gz http://apache.uberglobalmirror.com/kafka/$KAFKA_VER/kafka_$SCALA_VER-$KAFKA_VER.tgz \
+ && wget -O /tmp/kafka.asc https://dist.apache.org/repos/dist/release/kafka/$KAFKA_VER/kafka_$SCALA_VER-$KAFKA_VER.tgz.asc \
+ && gpg --verify /tmp/kafka.asc /tmp/kafka.tar.gz \
+ && tar -xzf /tmp/kafka.tar.gz -C /opt/kafka  --strip-components 1 \
+\
+# Set up permissions
+ && addgroup -S kafka \
+ && adduser -h /opt/kafka -G kafka -S -D -H -s /bin/false -g kafka kafka \
+ && chown -R kafka:kafka /opt/kafka \
+\
+# Clean up
+ && apk del gnupg openssl tar \
+ && rm -rf /tmp/* /var/tmp/* /var/cache/apk/*
 
 ADD run-kafka.sh /run-kafka.sh
 
