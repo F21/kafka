@@ -16,6 +16,8 @@ LOG_DIRS=${LOG_DIRS:=/var/lib/kafka/data}
 LOG_DIRS_ESC=$(sed $ESCAPE_SEQUENCE <<< "$LOG_DIRS")
 sed -i "s/log\.dirs=.*/log.dirs=${LOG_DIRS_ESC}/g" "$CONFIG_FILE"
 
+[ ! -z "$DELETE_TOPIC_ENABLE" ] && echo "delete.topic.enable=$DELETE_TOPIC_ENABLE" >> $CONFIG_FILE
+
 # Create and set the data directories correctly
 IFS=',' read -ra LOG_DIRS_EXPANDED <<< "$LOG_DIRS"
 for i in "${LOG_DIRS_EXPANDED[@]}"; do
