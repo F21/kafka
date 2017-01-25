@@ -5,12 +5,8 @@ CONFIG_FILE=/opt/kafka/config/server.properties
 ESCAPE_SEQUENCE='s/[]\/$*.^|[]/\\&/g'
 
 : ${CLUSTER_NAME:?"CLUSTER_NAME is required."}
-: ${BROKER_ID:?"BROKER_ID is required."}
 
 CLUSTER_NAME_ESC=$(sed $ESCAPE_SEQUENCE <<< "$CLUSTER_NAME")
-BROKER_ID_ESC=$(sed $ESCAPE_SEQUENCE <<< "$BROKER_ID")
-
-sed -i "s/broker\.id=.*/broker.id=${BROKER_ID_ESC}/g" "$CONFIG_FILE"
 
 LOG_DIRS=${LOG_DIRS:=/var/lib/kafka/data}
 LOG_DIRS_ESC=$(sed $ESCAPE_SEQUENCE <<< "$LOG_DIRS")
