@@ -8,6 +8,14 @@ ESCAPE_SEQUENCE='s/[]\/$*.^|[]/\\&/g'
 
 CLUSTER_NAME_ESC=$(sed $ESCAPE_SEQUENCE <<< "$CLUSTER_NAME")
 
+if [[ -z "$BROKER_ID" ]]; then
+    BROKER_ID=-1
+fi
+
+BROKER_ID_ESC=$(sed $ESCAPE_SEQUENCE <<< "$BROKER_ID")
+
+sed -i "s/broker\.id=.*/broker.id=${BROKER_ID_ESC}/g" "$CONFIG_FILE"
+
 LOG_DIRS=${LOG_DIRS:=/var/lib/kafka/data}
 LOG_DIRS_ESC=$(sed $ESCAPE_SEQUENCE <<< "$LOG_DIRS")
 sed -i "s/log\.dirs=.*/log.dirs=${LOG_DIRS_ESC}/g" "$CONFIG_FILE"
