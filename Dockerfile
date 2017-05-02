@@ -1,7 +1,7 @@
 FROM openjdk:8-jre-alpine
 MAINTAINER Francis Chuang <francis.chuang@boostport.com>
 
-ENV KAFKA_VER 0.10.2.0
+ENV KAFKA_VER 0.10.2.1
 ENV SCALA_VER 2.12
 
 RUN apk --no-cache --update add bash ca-certificates gnupg openssl su-exec tar \
